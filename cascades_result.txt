@@ -1,0 +1,7 @@
+Before delete: Event deleted_at: null
+Before delete: TicketType deleted_at: null
+After delete: Event deleted_at: 2026-03-14 02:09:03
+After delete: TicketType deleted_at: 2026-03-14 02:09:03
+After restore: Event deleted_at: null
+After restore: TicketType deleted_at: null
+Cleanup done.

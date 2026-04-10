@@ -1,0 +1,1133 @@
+\documentclass[a4paper,12pt,twoside]{report}
+\usepackage[english,french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage[outerbars]{changebar}
+\usepackage{caption}
+\usepackage{xcolor}
+\usepackage{makeidx}
+\usepackage[colorlinks]{hyperref}
+\usepackage[acronym]{glossaries}
+\usepackage{geometry}
+\usepackage[titletoc]{appendix}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\makeglossaries
+\makeindex
+
+\geometry{vmargin=3cm}
+
+% ===================== ACRONYMES =====================
+\newacronym{mvc}{MVC}{Modèle-Vue-Contrôleur}
+\newacronym{rbac}{RBAC}{Role-Based Access Control (Contrôle d'accès basé sur les rôles)}
+\newacronym{crud}{CRUD}{Create, Read, Update, Delete}
+\newacronym{orm}{ORM}{Object-Relational Mapping}
+\newacronym{csrf}{CSRF}{Cross-Site Request Forgery}
+\newacronym{xss}{XSS}{Cross-Site Scripting}
+\newacronym{pdf}{PDF}{Portable Document Format}
+\newacronym{smtp}{SMTP}{Simple Mail Transfer Protocol}
+\newacronym{api}{API}{Application Programming Interface}
+
+\setcounter{secnumdepth}{3}
+
+% ===================== HEADER / FOOTER =====================
+\fancyhf{}
+\fancyhead[LE]{\slshape \rightmark}
+\fancyhead[RE]{\thepage}
+\fancyhead[RO]{\slshape \leftmark}
+\fancyhead[LO]{\thepage}
+\pagestyle{fancy}
+
+\lfoot{\tiny\textsl{[PLACEHOLDER FILIÈRE]}}
+\cfoot{\tiny\textsl{année 2024 -- 2025}}
+\rfoot{\tiny\textsl{Rapport de PFA}}
+
+\addto\captionsfrench{
+\renewcommand{\listfigurename}{Liste des figures}%
+}
+
+% ===================== LISTINGS CONFIG =====================
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red!70!black},
+    showstringspaces=false
+}
+
+\begin{document}
+
+% ===================== PAGE DE GARDE =====================
+\begin{titlepage}
+
+\fontfamily{cmr}\selectfont
+
+\begin{center}
+
+    \includegraphics[scale=0.1]{ump}\hfill
+    \LARGE Université Mohammed Premier\hfill
+    \includegraphics[scale=0.1]{ump}\par
+    \Large École Nationale des Sciences Appliquées\par
+    \Large Oujda\vfill
+    \Large\textbf{Mémoire de Projet de Fin d'Année}\par
+    \large \textbf{Filière :} [PLACEHOLDER FILIÈRE]\par
+    \textit{\textbf{Soutenu le :} [PLACEHOLDER DATE]}\par
+
+\end{center}
+
+\vfill
+
+\begin{center}
+    \textbf{Réalisé par :}\bigskip
+
+    [PLACEHOLDER CANDIDAT]\par
+\end{center}
+
+\vfill
+
+\begin{center}
+
+    \hrulefill\par
+    \LARGE ConcertHub --- Plateforme de Gestion d'Événements\par
+    \LARGE et Billetterie en Ligne\par
+    \hrulefill\par
+
+\end{center}
+
+\vfill
+
+\textbf{Membres de jury :}\hfill\parbox[t]{4cm}{\textbf{Encadré par :}\\Prof. Azili}\par
+\textbf{M}. [PLACEHOLDER JURY 1]\par
+\textbf{M}. [PLACEHOLDER JURY 2]\par
+\textbf{M}. [PLACEHOLDER JURY 3]\par
+
+\vfill
+
+\begin{center}
+    Année Universitaire 2024 -- 2025
+\end{center}
+
+\end{titlepage}
+
+% ===================== DÉDICACE =====================
+\newpage
+\thispagestyle{empty}
+\begin{center}
+\Large\textbf{Dédicace}
+\end{center}
+\vfill
+\begin{center}
+\textit{[À compléter par l'étudiant]}
+\end{center}
+\vfill
+
+% ===================== REMERCIEMENTS =====================
+\newpage
+\thispagestyle{empty}
+\begin{center}
+\Large\textbf{Remerciements}
+\end{center}
+\vspace{2cm}
+
+Avant tout développement, je tiens à exprimer ma profonde gratitude envers toutes les personnes qui ont contribué, de près ou de loin, à la réalisation de ce projet de fin d'année.
+
+Je remercie tout particulièrement \textbf{Prof. Azili}, mon encadrant pédagogique, pour ses précieux conseils, sa disponibilité et son accompagnement tout au long de ce projet. Ses orientations m'ont permis d'avancer sereinement et d'acquérir de nouvelles compétences.
+
+Je souhaite également remercier l'ensemble du corps professoral de l'\textbf{École Nationale des Sciences Appliquées d'Oujda (ENSAO)} pour la qualité de l'enseignement dispensé et pour avoir su nous transmettre les connaissances nécessaires à notre formation d'ingénieur.
+
+Mes remerciements vont aussi à ma \textbf{famille} pour leur soutien inconditionnel, leurs encouragements permanents et leur patience durant toute la durée de mes études.
+
+Enfin, je remercie mes \textbf{collègues et amis} pour les échanges enrichissants, l'entraide et les moments de motivation partagés.
+
+% ===================== RÉSUMÉ FRANÇAIS =====================
+\newpage
+\selectlanguage{french}
+\begin{abstract}
+
+ConcertHub est une plateforme web full-stack développée avec Laravel, dédiée à la gestion intégrale d'événements musicaux et à la billetterie en ligne. L'application met en relation trois acteurs principaux --- Clients, Organisateurs et Administrateurs --- à travers des espaces personnalisés et sécurisés.
+
+Elle couvre l'ensemble du cycle de vie d'un événement : création, promotion, réservation de billets, paiement, génération automatique de billets \gls{pdf} et envoi par e-mail. Le système implémente une architecture \gls{mvc} robuste, un contrôle d'accès basé sur les rôles (\gls{rbac}), et intègre les bonnes pratiques de sécurité applicative (protection \gls{csrf}, échappement \gls{xss}, requêtes préparées).
+
+Ce projet illustre la maîtrise des technologies web modernes, de l'architecture \gls{mvc}, et des bonnes pratiques de sécurité applicative. Il démontre également une compréhension approfondie du déploiement cloud et de la gestion de projet logiciel.
+
+\textbf{Mots-clés :} Laravel, billetterie en ligne, gestion d'événements, MVC, RBAC, PDF, déploiement cloud.
+
+\end{abstract}
+
+% ===================== ABSTRACT ENGLISH =====================
+\newpage
+\selectlanguage{english}
+\begin{abstract}
+
+ConcertHub is a full-stack web platform built with Laravel, designed for comprehensive event management and online ticketing. The application connects three main actors --- Clients, Organizers, and Administrators --- through personalized and secured dashboards.
+
+It covers the full event lifecycle: creation, promotion, ticket booking, payment processing, automatic PDF ticket generation, and email delivery. The system implements a robust MVC architecture, Role-Based Access Control (RBAC), and integrates application security best practices (CSRF protection, XSS escaping, prepared queries).
+
+This project demonstrates proficiency in modern web technologies, MVC architecture, and application security best practices. It also showcases a deep understanding of cloud deployment and software project management.
+
+\textbf{Keywords:} Laravel, online ticketing, event management, MVC, RBAC, PDF, cloud deployment.
+
+\end{abstract}
+
+% ===================== TABLE DES MATIÈRES =====================
+\newpage
+\selectlanguage{french}
+\tableofcontents
+\thispagestyle{empty}
+
+% ===================== LISTE DES FIGURES =====================
+\newpage
+\listoffigures
+\addcontentsline{toc}{chapter}{Liste des figures}
+\thispagestyle{empty}
+
+% ===================== LISTE DES TABLEAUX =====================
+\newpage
+\listoftables
+\addcontentsline{toc}{chapter}{Liste des tableaux}
+\thispagestyle{empty}
+
+% ===================== ACRONYMES =====================
+\newpage
+\printglossary[type=\acronymtype,title=Acronymes]
+\addcontentsline{toc}{chapter}{Acronymes}
+\thispagestyle{empty}
+
+% ===================== INTRODUCTION GÉNÉRALE =====================
+\newpage
+\chapter*{Introduction Générale}
+\addcontentsline{toc}{chapter}{Introduction Générale}
+\thispagestyle{plain}
+
+L'industrie événementielle, et plus particulièrement le secteur des concerts et festivals, connaît une transformation numérique sans précédent. La billetterie traditionnelle, longtemps dominée par les points de vente physiques et les processus manuels, cède progressivement la place à des solutions digitales plus efficaces et accessibles.
+
+Cependant, de nombreux organisateurs d'événements font encore face à des défis majeurs : la gestion fragmentée des réservations, l'absence de centralisation des données, les risques de fraude sur les billets papier, et la difficulté de suivre en temps réel les performances commerciales de leurs événements. Du côté des spectateurs, l'expérience d'achat reste souvent laborieuse, avec des interfaces peu intuitives et des délais de livraison des billets qui génèrent de l'incertitude.
+
+Face à ces problématiques, le projet \textbf{ConcertHub} propose une solution innovante : une plateforme web intégrée qui centralise l'ensemble du cycle de vie d'un événement, de sa création par l'organisateur jusqu'à la réception du billet électronique par le client. Cette plateforme s'appuie sur le framework Laravel, reconnu pour sa robustesse et son écosystème riche, et implémente les meilleures pratiques en matière de sécurité et d'expérience utilisateur.
+
+\textbf{Objectifs du projet :}
+\begin{itemize}
+    \item Développer une plateforme web complète pour la gestion d'événements et la billetterie en ligne
+    \item Implémenter une architecture sécurisée avec contrôle d'accès basé sur les rôles
+    \item Automatiser la génération et l'envoi de billets PDF par email
+    \item Fournir des tableaux de bord analytiques pour chaque type d'utilisateur
+    \item Déployer l'application sur une infrastructure cloud moderne
+\end{itemize}
+
+\textbf{Organisation du rapport :}
+
+Ce rapport est structuré en quatre chapitres qui retracent les différentes étapes de réalisation du projet :
+
+\begin{itemize}
+    \item \textbf{Chapitre 1 : Contexte Général et Cahier des Charges} --- Présentation détaillée du projet, de la problématique, des objectifs et des spécifications fonctionnelles.
+    \item \textbf{Chapitre 2 : Conception et Modélisation} --- Description de l'architecture logicielle, des diagrammes UML et du modèle de données.
+    \item \textbf{Chapitre 3 : Réalisation Technique} --- Détails de l'implémentation, des technologies utilisées et des fonctionnalités développées.
+    \item \textbf{Chapitre 4 : Tests, Déploiement et Perspectives} --- Présentation des tests effectués, du processus de déploiement et des améliorations futures envisagées.
+\end{itemize}
+
+% ===================== CHAPITRE 1 =====================
+\chapter{Contexte Général et Cahier des Charges}
+\thispagestyle{empty}
+
+Ce premier chapitre présente le contexte du projet ConcertHub, la problématique à laquelle il répond, les objectifs fixés ainsi que les spécifications fonctionnelles détaillées.
+
+\section{Présentation du projet}
+
+ConcertHub est une plateforme web spécialisée dans la gestion, la promotion et la billetterie d'événements musicaux (concerts, festivals, spectacles). Elle constitue un écosystème complet qui met en relation trois types d'acteurs :
+
+\begin{itemize}
+    \item Les \textbf{Clients} qui souhaitent découvrir des événements et acheter des billets
+    \item Les \textbf{Organisateurs} qui créent et gèrent leurs propres événements
+    \item Les \textbf{Administrateurs} qui supervisent l'ensemble de la plateforme
+\end{itemize}
+
+La plateforme offre une expérience utilisateur fluide et sécurisée, depuis la navigation dans le catalogue d'événements jusqu'à la réception automatique du billet \gls{pdf} par email après paiement.
+
+\section{Problématique}
+
+L'organisation d'événements musicaux et la vente de billets présentent aujourd'hui plusieurs défis majeurs :
+
+\begin{enumerate}
+    \item \textbf{Billetterie manuelle et fragmentation} : De nombreux organisateurs gèrent encore leurs réservations via des tableurs Excel ou des systèmes disparates, ce qui entraîne des erreurs, des doublons et une perte de temps considérable.
+    
+    \item \textbf{Absence de centralisation} : Les informations sur les événements, les ventes et les clients sont dispersées entre différents outils, rendant difficile l'obtention d'une vue d'ensemble.
+    
+    \item \textbf{Insécurité des transactions} : Les billets papier sont facilement falsifiables, et les paiements non sécurisés exposent à des risques de fraude.
+    
+    \item \textbf{Absence de billets numériques} : La génération manuelle de billets est chronophage et sujette aux erreurs. Les clients doivent souvent attendre plusieurs jours pour recevoir leurs billets.
+    
+    \item \textbf{Difficulté de suivi pour les organisateurs} : Sans tableaux de bord analytiques, les organisateurs peinent à mesurer les performances de leurs événements et à prendre des décisions éclairées.
+\end{enumerate}
+
+\section{Objectifs}
+
+Pour répondre à cette problématique, ConcertHub vise à atteindre les objectifs suivants :
+
+\begin{itemize}
+    \item \textbf{Centraliser la gestion d'événements} sur une seule plateforme intuitive
+    \item \textbf{Permettre l'achat de billets en ligne} de manière sécurisée et instantanée
+    \item \textbf{Automatiser la génération et l'envoi de billets \gls{pdf}} par email immédiatement après le paiement
+    \item \textbf{Fournir des tableaux de bord personnalisés} pour chaque rôle (client, organisateur, administrateur)
+    \item \textbf{Assurer la sécurité} par un contrôle d'accès basé sur les rôles (\gls{rbac}) et les bonnes pratiques de sécurité web
+    \item \textbf{Offrir une interface responsive} accessible depuis tous les appareils (ordinateur, tablette, smartphone)
+\end{itemize}
+
+\section{Acteurs du système}
+
+Le tableau~\ref{tab:acteurs} présente les trois acteurs principaux du système ConcertHub avec leurs rôles et fonctionnalités.
+
+\begin{table}[!h]
+    \renewcommand{\tablename}{Tableau}
+    \centering
+    \caption{Acteurs du système ConcertHub}
+    \label{tab:acteurs}
+    \smallskip
+    \begin{tabular}{|p{2.5cm}|p{3.5cm}|p{7cm}|}
+        \hline
+        \textbf{Acteur} & \textbf{Rôle} & \textbf{Fonctionnalités principales} \\
+        \hline \hline
+        Client & Acheteur de billets & Parcourir le catalogue d'événements, consulter les détails, ajouter des billets au panier, effectuer le paiement, recevoir les billets PDF par email, consulter l'historique des commandes \\
+        \hline
+        Organisateur & Créateur d'événements & Créer, modifier et supprimer ses événements (\gls{crud}), gérer les types de billets (VIP, Standard, Early Bird), définir les prix et quantités, suivre les ventes via un tableau de bord dédié \\
+        \hline
+        Administrateur & Superviseur de la plateforme & Gérer tous les utilisateurs (création, modification, suppression), modérer les événements, consulter les statistiques globales, exporter les données, gérer les rôles \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{Fonctionnalités détaillées}
+
+Cette section détaille l'ensemble des fonctionnalités de ConcertHub, organisées par espace utilisateur.
+
+\subsection{Espace public (visiteur non authentifié)}
+
+\begin{itemize}
+    \item \textbf{Page d'accueil} : Présentation de la plateforme avec les événements mis en avant et les événements à venir
+    \item \textbf{Catalogue des événements} : Liste paginée de tous les événements disponibles avec filtres (date, lieu, catégorie)
+    \item \textbf{Page de détail d'un événement} : Informations complètes (description, date, lieu, image bannière), types de billets disponibles avec prix et quantités restantes
+    \item \textbf{Inscription et connexion} : Formulaires d'authentification avec vérification email obligatoire
+\end{itemize}
+
+\subsection{Espace client}
+
+\begin{itemize}
+    \item \textbf{Tableau de bord personnel} : Vue d'ensemble des commandes récentes et billets
+    \item \textbf{Panier d'achat} : Ajout/suppression de billets, modification des quantités
+    \item \textbf{Page de checkout} : Récapitulatif de la commande et formulaire de paiement
+    \item \textbf{Historique des commandes} : Liste de toutes les commandes passées avec statuts
+    \item \textbf{Téléchargement des billets \gls{pdf}} : Accès aux billets générés pour chaque commande
+    \item \textbf{Gestion du profil} : Modification des informations personnelles et du mot de passe
+\end{itemize}
+
+\subsection{Espace organisateur}
+
+\begin{itemize}
+    \item \textbf{Tableau de bord organisateur} : Statistiques de ventes, revenus générés, événements actifs
+    \item \textbf{Gestion des événements (\gls{crud})} : Création, modification, publication et suppression d'événements
+    \item \textbf{Upload d'images} : Téléchargement et gestion des bannières d'événements
+    \item \textbf{Gestion des types de billets} : Création de différentes catégories (VIP, Standard, Early Bird) avec prix et quantités distinctes
+    \item \textbf{Suivi des ventes} : Visualisation des commandes par événement, revenus par type de billet
+\end{itemize}
+
+\subsection{Espace administrateur}
+
+\begin{itemize}
+    \item \textbf{Tableau de bord global} : Statistiques de la plateforme (nombre d'utilisateurs, événements, commandes, revenus totaux)
+    \item \textbf{Gestion des utilisateurs} : Liste, création, modification et suppression des comptes utilisateurs
+    \item \textbf{Attribution des rôles} : Modification du rôle d'un utilisateur (client, organisateur, admin)
+    \item \textbf{Modération des événements} : Consultation et suppression d'événements non conformes
+    \item \textbf{Statistiques par organisateur} : Vue détaillée des performances de chaque organisateur
+    \item \textbf{Export de données} : Génération de rapports et exports CSV
+\end{itemize}
+
+% ===================== CHAPITRE 2 =====================
+\chapter{Conception et Modélisation}
+\thispagestyle{empty}
+
+Ce chapitre présente la conception de l'application ConcertHub, incluant l'architecture logicielle adoptée, les diagrammes UML et le modèle de données.
+
+\section{Architecture globale}
+
+ConcertHub est développé avec le framework \textbf{Laravel 10}, qui implémente le patron d'architecture \gls{mvc} (Modèle-Vue-Contrôleur). Cette architecture permet une séparation claire des responsabilités :
+
+\begin{itemize}
+    \item \textbf{Modèles (Models)} : Les modèles Eloquent encapsulent la logique métier et gèrent les interactions avec la base de données. Chaque entité du domaine (User, Event, TicketType, Order, etc.) possède son modèle avec ses relations définies.
+    
+    \item \textbf{Vues (Views)} : Les templates Blade génèrent le rendu HTML. L'interface utilise TailwindCSS pour le styling et Alpine.js pour les interactions JavaScript légères.
+    
+    \item \textbf{Contrôleurs (Controllers)} : Les contrôleurs traitent les requêtes HTTP, orchestrent la logique applicative et retournent les réponses appropriées. Ils sont organisés par domaine fonctionnel (Admin, Organizer, Client, Auth).
+\end{itemize}
+
+La figure~\ref{fig:architecture} illustre l'architecture globale de l'application.
+
+\begin{figure}[!h]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{architecture}
+    \fbox{\parbox{0.8\textwidth}{\centering\vspace{3cm}[Placeholder : Diagramme d'architecture MVC]\vspace{3cm}}}
+    \caption{Architecture MVC de ConcertHub}
+    \label{fig:architecture}
+\end{figure}
+
+\section{Diagramme de cas d'utilisation}
+
+Le diagramme de cas d'utilisation présente les interactions entre les acteurs et le système. Les principaux cas d'utilisation sont :
+
+\textbf{Pour le Client :}
+\begin{itemize}
+    \item S'inscrire / Se connecter
+    \item Parcourir les événements
+    \item Consulter les détails d'un événement
+    \item Ajouter des billets au panier
+    \item Effectuer un paiement
+    \item Télécharger ses billets \gls{pdf}
+    \item Consulter son historique
+\end{itemize}
+
+\textbf{Pour l'Organisateur :}
+\begin{itemize}
+    \item Créer un événement
+    \item Modifier / Supprimer un événement
+    \item Gérer les types de billets
+    \item Consulter les statistiques de ventes
+\end{itemize}
+
+\textbf{Pour l'Administrateur :}
+\begin{itemize}
+    \item Gérer les utilisateurs
+    \item Modérer les événements
+    \item Consulter les statistiques globales
+    \item Attribuer les rôles
+\end{itemize}
+
+\begin{figure}[!h]
+    \centering
+    % \includegraphics[width=0.9\textwidth]{use-case}
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{4cm}[Placeholder : Diagramme de cas d'utilisation UML]\vspace{4cm}}}
+    \caption{Diagramme de cas d'utilisation}
+    \label{fig:usecase}
+\end{figure}
+
+\section{Modèle de données}
+
+Le modèle de données de ConcertHub est structuré autour de six entités principales. Le tableau~\ref{tab:entites} présente ces entités avec leurs attributs clés et leurs relations.
+
+\begin{table}[!h]
+    \renewcommand{\tablename}{Tableau}
+    \centering
+    \caption{Entités du modèle de données}
+    \label{tab:entites}
+    \smallskip
+    \begin{tabular}{|p{2cm}|p{5.5cm}|p{5.5cm}|}
+        \hline
+        \textbf{Entité} & \textbf{Attributs clés} & \textbf{Relations} \\
+        \hline \hline
+        User & id, name, email, password, role (admin/organizer/client), email\_verified\_at & HasMany Orders, HasMany Events (si organisateur) \\
+        \hline
+        Event & id, title, description, date, location, banner\_image, user\_id & BelongsTo User (organisateur), HasMany TicketTypes \\
+        \hline
+        TicketType & id, name, price, quantity\_available, event\_id & BelongsTo Event, HasMany OrderItems \\
+        \hline
+        Order & id, total\_amount, status, user\_id & BelongsTo User, HasMany OrderItems, HasOne Payment \\
+        \hline
+        OrderItem & id, quantity, unit\_price, order\_id, ticket\_type\_id & BelongsTo Order, BelongsTo TicketType \\
+        \hline
+        Payment & id, method, status, transaction\_id, order\_id & BelongsTo Order \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{Diagramme de classes}
+
+Le diagramme de classes UML (figure~\ref{fig:classes}) représente la structure des classes métier de l'application avec leurs attributs, méthodes et associations.
+
+\begin{figure}[!h]
+    \centering
+    % \includegraphics[width=0.95\textwidth]{class-diagram}
+    \fbox{\parbox{0.95\textwidth}{\centering\vspace{5cm}[Placeholder : Diagramme de classes UML]\vspace{5cm}}}
+    \caption{Diagramme de classes de ConcertHub}
+    \label{fig:classes}
+\end{figure}
+
+\section{Diagramme de séquence}
+
+Le diagramme de séquence (figure~\ref{fig:sequence}) illustre le flux complet d'achat d'un billet, qui constitue le processus métier principal de l'application :
+
+\begin{enumerate}
+    \item Le \textbf{Client} navigue dans le catalogue et sélectionne un événement
+    \item Le \textbf{Client} choisit un type de billet et l'ajoute au panier
+    \item Le \textbf{Client} accède à la page de checkout
+    \item Le \textbf{Client} remplit les informations de paiement et valide
+    \item Le \textbf{Système} traite le paiement et crée la commande
+    \item Le \textbf{Système} génère automatiquement le billet \gls{pdf}
+    \item Le \textbf{Système} envoie le billet par email au client
+    \item Le \textbf{Client} reçoit la confirmation et peut télécharger son billet
+\end{enumerate}
+
+\begin{figure}[!h]
+    \centering
+    % \includegraphics[width=0.9\textwidth]{sequence-diagram}
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{5cm}[Placeholder : Diagramme de séquence --- Processus d'achat]\vspace{5cm}}}
+    \caption{Diagramme de séquence du processus d'achat de billet}
+    \label{fig:sequence}
+\end{figure}
+
+% ===================== CHAPITRE 3 =====================
+\chapter{Réalisation Technique}
+\thispagestyle{empty}
+
+Ce chapitre détaille les aspects techniques de la réalisation de ConcertHub : l'environnement de développement, la structure du projet, et l'implémentation des principales fonctionnalités.
+
+\section{Environnement de développement}
+
+Le tableau~\ref{tab:outils} présente les technologies et outils utilisés pour le développement de ConcertHub.
+
+\begin{table}[!h]
+    \renewcommand{\tablename}{Tableau}
+    \centering
+    \caption{Environnement de développement}
+    \label{tab:outils}
+    \smallskip
+    \begin{tabular}{|p{4cm}|p{9cm}|}
+        \hline
+        \textbf{Catégorie} & \textbf{Technologie / Version} \\
+        \hline \hline
+        Langage backend & PHP 8.2 \\
+        \hline
+        Framework & Laravel 10 \\
+        \hline
+        Frontend & TailwindCSS + Alpine.js + Blade Templates \\
+        \hline
+        Base de données & MySQL \\
+        \hline
+        \gls{orm} & Eloquent (Laravel) \\
+        \hline
+        Génération \gls{pdf} & Barryvdh/Laravel-DomPDF \\
+        \hline
+        Envoi d'emails & \gls{smtp} (Gmail / Resend) \\
+        \hline
+        Build Frontend & Vite \\
+        \hline
+        Versioning & Git + GitHub \\
+        \hline
+        Déploiement & Railway.app (Docker) \\
+        \hline
+        IDE & Visual Studio Code / PhpStorm \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{Structure du projet Laravel}
+
+L'arborescence du projet suit les conventions Laravel. Les principaux répertoires sont :
+
+\begin{itemize}
+    \item \texttt{app/Models/} : Modèles Eloquent (User, Event, TicketType, Order, OrderItem, Payment)
+    \item \texttt{app/Http/Controllers/} : Contrôleurs organisés par domaine
+    \begin{itemize}
+        \item \texttt{Admin/} : DashboardController, UserController, EventController
+        \item \texttt{Organizer/} : DashboardController, EventController, TicketTypeController
+        \item \texttt{Client/} : DashboardController
+        \item \texttt{Auth/} : Contrôleurs d'authentification (Breeze)
+    \end{itemize}
+    \item \texttt{app/Http/Middleware/} : Middlewares de contrôle d'accès (AdminMiddleware, OrganizerMiddleware, ClientMiddleware)
+    \item \texttt{app/Mail/} : Classes Mailable pour l'envoi d'emails (TicketMail)
+    \item \texttt{app/Policies/} : Politiques d'autorisation (EventPolicy)
+    \item \texttt{resources/views/} : Templates Blade organisés par section
+    \item \texttt{routes/web.php} : Définition des routes web
+    \item \texttt{database/migrations/} : Migrations de base de données
+\end{itemize}
+
+\section{Implémentation de l'authentification}
+
+L'authentification de ConcertHub s'appuie sur \textbf{Laravel Breeze}, qui fournit un système complet d'inscription, connexion, réinitialisation de mot de passe et vérification email.
+
+\subsection{Vérification email obligatoire}
+
+Tout nouvel utilisateur doit vérifier son adresse email avant de pouvoir accéder aux fonctionnalités de la plateforme. Cette vérification utilise le trait \texttt{MustVerifyEmail} et le middleware \texttt{verified}.
+
+\subsection{Système de rôles}
+
+Les utilisateurs sont différenciés par un champ \texttt{role} qui peut prendre les valeurs : \texttt{client}, \texttt{organizer}, \texttt{admin}, ou \texttt{administrator} (Super Admin).
+
+\subsection{Middlewares de contrôle d'accès}
+
+Trois middlewares personnalisés assurent le contrôle d'accès basé sur les rôles (\gls{rbac}) :
+
+\begin{lstlisting}[language=PHP,caption=Middleware AdminMiddleware]
+public function handle(Request $request, Closure $next)
+{
+    if (!auth()->check() || 
+        !in_array(auth()->user()->role, ['admin', 'administrator'])) {
+        abort(403, 'Acces non autorise');
+    }
+    return $next($request);
+}
+\end{lstlisting}
+
+\subsection{Protection du Super Admin}
+
+Un utilisateur ayant le rôle \texttt{administrator} (Super Admin) ne peut être ni modifié ni supprimé par les autres administrateurs. Cette protection est implémentée dans le contrôleur \texttt{UserController}.
+
+\section{Gestion des événements et billets}
+
+\subsection{CRUD des événements}
+
+Les organisateurs peuvent créer, modifier et supprimer leurs propres événements via une interface dédiée. Chaque événement comprend :
+\begin{itemize}
+    \item Titre et description
+    \item Date et heure
+    \item Lieu
+    \item Image bannière (upload)
+\end{itemize}
+
+La politique \texttt{EventPolicy} garantit qu'un organisateur ne peut modifier que ses propres événements.
+
+\subsection{Types de billets}
+
+Pour chaque événement, l'organisateur peut créer plusieurs types de billets avec des caractéristiques distinctes :
+\begin{itemize}
+    \item \textbf{VIP} : Places premium avec avantages exclusifs
+    \item \textbf{Standard} : Places classiques
+    \item \textbf{Early Bird} : Tarif réduit pour les réservations anticipées
+\end{itemize}
+
+Chaque type de billet possède son propre prix et sa quantité disponible, qui est décrémentée automatiquement à chaque achat.
+
+\section{Processus de réservation et paiement}
+
+Le processus d'achat se déroule en plusieurs étapes :
+
+\begin{enumerate}
+    \item \textbf{Ajout au panier} : Le client sélectionne un type de billet et une quantité
+    \item \textbf{Page de checkout} : Récapitulatif de la commande avec le montant total
+    \item \textbf{Traitement du paiement} : Validation des informations et création du paiement
+    \item \textbf{Création de la commande} : Enregistrement de l'Order et des OrderItems
+    \item \textbf{Génération du \gls{pdf}} : Création automatique du billet
+    \item \textbf{Envoi par email} : Dispatch de l'email avec le billet en pièce jointe
+\end{enumerate}
+
+\section{Génération des billets PDF}
+
+La génération des billets \gls{pdf} utilise le package \textbf{Barryvdh/Laravel-DomPDF}. Le processus est le suivant :
+
+\begin{lstlisting}[language=PHP,caption=Génération et envoi du billet PDF]
+// Generation du PDF
+$pdf = PDF::loadView('tickets.pdf', [
+    'order' => $order,
+    'event' => $event,
+    'ticketType' => $ticketType
+]);
+
+// Stockage du fichier
+$path = 'tickets/ticket-' . $order->id . '.pdf';
+Storage::put($path, $pdf->output());
+
+// Envoi par email
+Mail::to($user->email)->send(new TicketMail($order, $path));
+\end{lstlisting}
+
+Le template Blade du billet inclut :
+\begin{itemize}
+    \item Les informations de l'événement (titre, date, lieu)
+    \item Les détails du billet (type, prix, quantité)
+    \item Un numéro de commande unique
+    \item Les informations du client
+\end{itemize}
+
+\section{Tableaux de bord}
+
+Chaque type d'utilisateur dispose d'un tableau de bord adapté à ses besoins :
+
+\subsection{Dashboard Client}
+\begin{itemize}
+    \item Nombre total de commandes
+    \item Montant total dépensé
+    \item Commandes récentes avec statuts
+    \item Accès rapide aux billets téléchargeables
+\end{itemize}
+
+\subsection{Dashboard Organisateur}
+\begin{itemize}
+    \item Nombre d'événements créés
+    \item Nombre total de billets vendus
+    \item Revenus générés
+    \item Liste des événements avec leurs performances
+\end{itemize}
+
+\subsection{Dashboard Administrateur}
+\begin{itemize}
+    \item Statistiques globales (utilisateurs, événements, commandes)
+    \item Revenus totaux de la plateforme
+    \item Graphiques d'évolution
+    \item Accès rapide aux fonctions de gestion
+\end{itemize}
+
+\section{Sécurité}
+
+ConcertHub implémente plusieurs couches de sécurité :
+
+\begin{enumerate}
+    \item \textbf{Vérification email obligatoire} : Prévient les inscriptions avec des adresses fictives
+    
+    \item \textbf{\gls{rbac} via Middleware} : Chaque route est protégée par le middleware approprié
+    
+    \item \textbf{Protection \gls{csrf}} : Tous les formulaires incluent le token \texttt{@csrf}
+    
+    \item \textbf{Échappement \gls{xss}} : Blade échappe automatiquement les variables avec \texttt{\{\{ \}\}}
+    
+    \item \textbf{Requêtes préparées} : Eloquent utilise des requêtes préparées, prévenant l'injection SQL
+    
+    \item \textbf{Hachage Bcrypt} : Les mots de passe sont hachés avec Bcrypt avant stockage
+    
+    \item \textbf{Isolation du Super Admin} : Le compte administrator est protégé contre les modifications
+    
+    \item \textbf{Politiques d'autorisation} : Les Policies Laravel vérifient les droits sur les ressources
+\end{enumerate}
+
+% ===================== CHAPITRE 4 =====================
+\chapter{Tests, Déploiement et Perspectives}
+\thispagestyle{empty}
+
+Ce chapitre présente les tests effectués pour valider le bon fonctionnement de l'application, le processus de déploiement sur Railway.app, ainsi que les perspectives d'amélioration futures.
+
+\section{Tests effectués}
+
+Des tests fonctionnels ont été réalisés pour valider les principales fonctionnalités de l'application :
+
+\subsection{Tests d'authentification}
+\begin{itemize}
+    \item Inscription d'un nouvel utilisateur
+    \item Envoi et validation de l'email de vérification
+    \item Connexion avec identifiants valides/invalides
+    \item Réinitialisation de mot de passe
+    \item Déconnexion
+\end{itemize}
+
+\subsection{Tests du parcours client}
+\begin{itemize}
+    \item Navigation dans le catalogue d'événements
+    \item Consultation des détails d'un événement
+    \item Ajout de billets au panier
+    \item Modification des quantités dans le panier
+    \item Processus de checkout complet
+    \item Réception de l'email avec le billet \gls{pdf}
+    \item Téléchargement du billet depuis le dashboard
+\end{itemize}
+
+\subsection{Tests de l'espace organisateur}
+\begin{itemize}
+    \item Création d'un événement avec upload d'image
+    \item Modification des informations d'un événement
+    \item Ajout de types de billets
+    \item Consultation des statistiques de ventes
+    \item Suppression d'un événement (soft delete)
+\end{itemize}
+
+\subsection{Tests de l'administration}
+\begin{itemize}
+    \item Gestion des utilisateurs (création, modification, suppression)
+    \item Attribution des rôles
+    \item Protection du Super Admin
+    \item Modération des événements
+    \item Consultation des statistiques globales
+\end{itemize}
+
+\section{Déploiement}
+
+L'application ConcertHub est déployée sur \textbf{Railway.app}, une plateforme cloud moderne qui simplifie le déploiement d'applications conteneurisées.
+
+\subsection{Processus de déploiement}
+
+\begin{enumerate}
+    \item \textbf{Connexion du dépôt GitHub} : Railway se connecte au repository GitHub du projet
+    
+    \item \textbf{Ajout du plugin MySQL} : Une base de données MySQL est provisionnée automatiquement
+    
+    \item \textbf{Configuration des variables d'environnement} :
+    \begin{itemize}
+        \item \texttt{APP\_KEY} : Clé de chiffrement Laravel
+        \item \texttt{DB\_*} : Paramètres de connexion MySQL
+        \item \texttt{MAIL\_*} : Configuration \gls{smtp}
+        \item \texttt{APP\_URL} : URL de production
+    \end{itemize}
+    
+    \item \textbf{Volume persistant} : Configuration d'un volume pour le stockage des images uploadées
+    
+    \item \textbf{Migrations et seeders} : Exécution des migrations de base de données
+    
+    \item \textbf{Dockerfile} : Un Dockerfile personnalisé assure la reproductibilité du build
+\end{enumerate}
+
+\subsection{Configuration Docker}
+
+Le fichier \texttt{Dockerfile} configure l'environnement de production avec PHP 8.2, les extensions requises (pdo\_mysql, gd, etc.) et les dépendances Composer.
+
+\section{Captures d'écran}
+
+Les figures suivantes présentent les principales interfaces de l'application.
+
+\begin{figure}[!h]
+    \centering
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{3cm}[Placeholder : Capture d'écran --- Page d'accueil]\vspace{3cm}}}
+    \caption{Page d'accueil de ConcertHub}
+    \label{fig:home}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{3cm}[Placeholder : Capture d'écran --- Détail d'un événement]\vspace{3cm}}}
+    \caption{Page de détail d'un événement}
+    \label{fig:event-detail}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{3cm}[Placeholder : Capture d'écran --- Page de checkout]\vspace{3cm}}}
+    \caption{Page de checkout}
+    \label{fig:checkout}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{3cm}[Placeholder : Capture d'écran --- Dashboard client]\vspace{3cm}}}
+    \caption{Tableau de bord client}
+    \label{fig:client-dashboard}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{3cm}[Placeholder : Capture d'écran --- Dashboard organisateur]\vspace{3cm}}}
+    \caption{Tableau de bord organisateur}
+    \label{fig:organizer-dashboard}
+\end{figure}
+
+\begin{figure}[!h]
+    \centering
+    \fbox{\parbox{0.9\textwidth}{\centering\vspace{3cm}[Placeholder : Capture d'écran --- Panel administrateur]\vspace{3cm}}}
+    \caption{Panel d'administration}
+    \label{fig:admin-panel}
+\end{figure}
+
+\section{Perspectives}
+
+Plusieurs améliorations sont envisagées pour les futures versions de ConcertHub :
+
+\begin{enumerate}
+    \item \textbf{Intégration d'une passerelle de paiement réelle} : Implémentation de Stripe ou PayPal pour les transactions financières sécurisées
+    
+    \item \textbf{Application mobile} : Développement d'une application mobile avec React Native pour iOS et Android
+    
+    \item \textbf{Scan de billets par QR code} : Génération de QR codes sur les billets et application de scan pour les organisateurs
+    
+    \item \textbf{Support multilingue} : Internationalisation de la plateforme (français, arabe, anglais)
+    
+    \item \textbf{Système de notation et avis} : Permettre aux clients de noter et commenter les événements auxquels ils ont assisté
+    
+    \item \textbf{Notifications push} : Alertes en temps réel pour les nouveaux événements et rappels
+    
+    \item \textbf{Intégration réseaux sociaux} : Partage d'événements et connexion via OAuth (Google, Facebook)
+    
+    \item \textbf{Système de promotions} : Codes promo et réductions pour les clients fidèles
+\end{enumerate}
+
+% ===================== CONCLUSION =====================
+\chapter*{Conclusion Générale}
+\addcontentsline{toc}{chapter}{Conclusion Générale}
+\thispagestyle{plain}
+
+Le projet ConcertHub représente l'aboutissement d'un travail de conception et de développement d'une plateforme web complète dédiée à la gestion d'événements et à la billetterie en ligne. Ce projet m'a permis de mettre en pratique et d'approfondir de nombreuses compétences techniques et méthodologiques.
+
+\textbf{Réalisations accomplies :}
+
+Au terme de ce projet, ConcertHub offre une solution fonctionnelle qui répond aux objectifs initiaux :
+\begin{itemize}
+    \item Une plateforme centralisée pour la gestion d'événements musicaux
+    \item Un système de billetterie en ligne complet avec génération automatique de billets \gls{pdf}
+    \item Des espaces personnalisés pour chaque type d'utilisateur (client, organisateur, administrateur)
+    \item Une architecture sécurisée implémentant le contrôle d'accès basé sur les rôles
+    \item Un déploiement réussi sur une infrastructure cloud
+\end{itemize}
+
+\textbf{Compétences acquises :}
+
+Ce projet m'a permis de développer des compétences dans plusieurs domaines :
+\begin{itemize}
+    \item \textbf{Développement web full-stack} avec le framework Laravel et son écosystème
+    \item \textbf{Architecture logicielle} \gls{mvc} et bonnes pratiques de développement
+    \item \textbf{Sécurité applicative} : authentification, autorisation, protection contre les attaques courantes
+    \item \textbf{Intégration de services tiers} : génération de \gls{pdf}, envoi d'emails
+    \item \textbf{Déploiement cloud} et conteneurisation avec Docker
+    \item \textbf{Gestion de projet} : planification, organisation et documentation
+\end{itemize}
+
+\textbf{Perspectives :}
+
+ConcertHub constitue une base solide qui peut être enrichie avec de nombreuses fonctionnalités : intégration de paiements réels, application mobile, scan de billets par QR code, et internationalisation. Ces évolutions permettraient de transformer cette plateforme académique en un produit commercialement viable.
+
+En conclusion, ce projet de fin d'année m'a offert l'opportunité de concevoir et réaliser une application web professionnelle de bout en bout, consolidant ainsi les connaissances acquises durant ma formation et me préparant aux défis du monde professionnel.
+
+% ===================== BIBLIOGRAPHIE =====================
+\newpage
+\addcontentsline{toc}{chapter}{Bibliographie}
+
+\begin{thebibliography}{9}
+
+\bibitem{laravel}
+Laravel Documentation,
+\textit{Laravel - The PHP Framework For Web Artisans},
+\url{https://laravel.com/docs}, 2024.
+
+\bibitem{tailwind}
+TailwindCSS Documentation,
+\textit{Tailwind CSS - Rapidly build modern websites without ever leaving your HTML},
+\url{https://tailwindcss.com/docs}, 2024.
+
+\bibitem{dompdf}
+Barryvdh,
+\textit{Laravel-DomPDF - A DOMPDF Wrapper for Laravel},
+GitHub Repository,
+\url{https://github.com/barryvdh/laravel-dompdf}, 2024.
+
+\bibitem{railway}
+Railway Documentation,
+\textit{Railway - Instant Deployments, Effortless Scale},
+\url{https://docs.railway.app}, 2024.
+
+\bibitem{breeze}
+Laravel Breeze Documentation,
+\textit{Laravel Breeze - Minimal Laravel authentication scaffolding},
+\url{https://laravel.com/docs/10.x/starter-kits#laravel-breeze}, 2024.
+
+\bibitem{eloquent}
+Laravel Eloquent ORM,
+\textit{Eloquent: Getting Started},
+\url{https://laravel.com/docs/10.x/eloquent}, 2024.
+
+\bibitem{alpine}
+Alpine.js Documentation,
+\textit{Alpine.js - A rugged, minimal framework for composing JavaScript behavior},
+\url{https://alpinejs.dev}, 2024.
+
+\end{thebibliography}
+
+% ===================== ANNEXES =====================
+\appendix
+\appendixpage
+\addappheadtotoc
+
+\chapter{Code source des modèles principaux}
+
+\section{Modèle User}
+
+\begin{lstlisting}[language=PHP,caption=app/Models/User.php]
+<?php
+
+namespace App\Models;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable implements MustVerifyEmail
+{
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name', 'email', 'password', 'role',
+    ];
+
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+}
+\end{lstlisting}
+
+\section{Modèle Event}
+
+\begin{lstlisting}[language=PHP,caption=app/Models/Event.php]
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Event extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'title', 'description', 'date', 'location', 
+        'banner_image', 'user_id',
+    ];
+
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function ticketTypes()
+    {
+        return $this->hasMany(TicketType::class);
+    }
+}
+\end{lstlisting}
+
+\section{Modèle TicketType}
+
+\begin{lstlisting}[language=PHP,caption=app/Models/TicketType.php]
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class TicketType extends Model
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'name', 'price', 'quantity_available', 'event_id',
+    ];
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+}
+\end{lstlisting}
+
+\section{Modèle Order}
+
+\begin{lstlisting}[language=PHP,caption=app/Models/Order.php]
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Order extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'total_amount', 'status', 'user_id',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+}
+\end{lstlisting}
+
+\chapter{Template Blade du billet PDF}
+
+\begin{lstlisting}[language=HTML,caption=resources/views/tickets/pdf.blade.php]
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Billet - {{ $event->title }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .ticket { border: 2px solid #333; padding: 20px; }
+        .header { text-align: center; border-bottom: 1px solid #ccc; }
+        .event-title { font-size: 24px; font-weight: bold; }
+        .details { margin: 20px 0; }
+        .detail-row { margin: 10px 0; }
+        .label { font-weight: bold; color: #666; }
+        .footer { text-align: center; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="header">
+            <h1>ConcertHub</h1>
+            <p class="event-title">{{ $event->title }}</p>
+        </div>
+        
+        <div class="details">
+            <div class="detail-row">
+                <span class="label">Date :</span>
+                {{ $event->date->format('d/m/Y H:i') }}
+            </div>
+            <div class="detail-row">
+                <span class="label">Lieu :</span>
+                {{ $event->location }}
+            </div>
+            <div class="detail-row">
+                <span class="label">Type de billet :</span>
+                {{ $ticketType->name }}
+            </div>
+            <div class="detail-row">
+                <span class="label">Prix unitaire :</span>
+                {{ number_format($ticketType->price, 2) }} MAD
+            </div>
+            <div class="detail-row">
+                <span class="label">Numero de commande :</span>
+                #{{ $order->id }}
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Ce billet est personnel et non transferable.</p>
+            <p>Presentez ce billet a l'entree de l'evenement.</p>
+        </div>
+    </div>
+</body>
+</html>
+\end{lstlisting}
+
+% ===================== INDEX =====================
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+
+\end{document}
